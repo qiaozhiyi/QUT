@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/Book1.iml" filepath="$PROJECT_DIR$/Book1.iml" />
+      <module fileurl="file://$USER_HOME$/Desktop/mysql-connector-j-8.4.0/src/build/build.iml" filepath="$USER_HOME$/Desktop/mysql-connector-j-8.4.0/src/build/build.iml" />
+      <module fileurl="file://$USER_HOME$/Desktop/mysql-connector-j-8.4.0/src/main/core-api/core-api.iml" filepath="$USER_HOME$/Desktop/mysql-connector-j-8.4.0/src/main/core-api/core-api.iml" />
+      <module fileurl="file://$USER_HOME$/Desktop/mysql-connector-j-8.4.0/src/main/core-impl/core-impl.iml" filepath="$USER_HOME$/Desktop/mysql-connector-j-8.4.0/src/main/core-impl/core-impl.iml" />
+      <module fileurl="file://$USER_HOME$/Desktop/mysql-connector-j-8.4.0/src/demo/demo.iml" filepath="$USER_HOME$/Desktop/mysql-connector-j-8.4.0/src/demo/demo.iml" />
+      <module fileurl="file://$USER_HOME$/Desktop/mysql-connector-j-8.4.0/src/generated/generated.iml" filepath="$USER_HOME$/Desktop/mysql-connector-j-8.4.0/src/generated/generated.iml" />
+      <module fileurl="file://$USER_HOME$/Desktop/mysql-connector-j-8.4.0/src/legacy/legacy.iml" filepath="$USER_HOME$/Desktop/mysql-connector-j-8.4.0/src/legacy/legacy.iml" />
+      <module fileurl="file://$USER_HOME$/Desktop/mysql-connector-j-8.4.0/src/main/protocol-impl/protocol-impl.iml" filepath="$USER_HOME$/Desktop/mysql-connector-j-8.4.0/src/main/protocol-impl/protocol-impl.iml" />
+      <module fileurl="file://$USER_HOME$/Desktop/mysql-connector-j-8.4.0/src/test/test.iml" filepath="$USER_HOME$/Desktop/mysql-connector-j-8.4.0/src/test/test.iml" />
+      <module fileurl="file://$USER_HOME$/Desktop/mysql-connector-j-8.4.0/src/main/user-api/user-api.iml" filepath="$USER_HOME$/Desktop/mysql-connector-j-8.4.0/src/main/user-api/user-api.iml" />
+      <module fileurl="file://$USER_HOME$/Desktop/mysql-connector-j-8.4.0/src/main/user-impl/user-impl.iml" filepath="$USER_HOME$/Desktop/mysql-connector-j-8.4.0/src/main/user-impl/user-impl.iml" />
+    </modules>
+  </component>
+</project>
