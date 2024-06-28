@@ -8,8 +8,9 @@ import java.sql.*;
 public class UserFrame extends JFrame {
     private Connection connection;
     private String username;
-    private DefaultTableModel bookTableModel;
+    private DefaultTableModel bookTableModel;       //数据模型列表
 
+    //init方法
     public UserFrame(Connection connection, String username) {
         this.connection = connection;
         this.username = username;
@@ -23,6 +24,7 @@ public class UserFrame extends JFrame {
         welcomeLabel.setHorizontalAlignment(SwingConstants.CENTER);
         add(welcomeLabel, BorderLayout.NORTH);
 
+        //顶层容器
         JTabbedPane tabbedPane = new JTabbedPane();
 
         // 创建各个面板
@@ -45,15 +47,19 @@ public class UserFrame extends JFrame {
         bookTableModel.addColumn("价格");
         bookTableModel.addColumn("借阅状态");
 
+        //直接填充（行和列都不支持编辑）
         JTable table = new JTable(bookTableModel) {
             @Override
             public boolean isCellEditable(int row, int column) {
-                return false; // 禁止编辑
+                return false; // 禁止编辑（hacker预防策略）
             }
         };
-        JScrollPane scrollPane = new JScrollPane(table);
-        panel.add(scrollPane, BorderLayout.CENTER);
 
+        //整个滚动条
+        JScrollPane scrollPane = new JScrollPane(table);
+        panel.add(scrollPane, BorderLayout.CENTER);     //中心区域防止伸缩变化导致滚动条发生奇奇怪怪的状况
+
+        //三个按钮
         JPanel buttonPanel = new JPanel();
         JButton borrowButton = new JButton("借阅");
         JButton returnButton = new JButton("归还");
@@ -67,7 +73,7 @@ public class UserFrame extends JFrame {
         borrowButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                int selectedRow = table.getSelectedRow();
+                int selectedRow = table.getSelectedRow();   //找到选中的行
                 if (selectedRow >= 0) {
                     String isbn = (String) bookTableModel.getValueAt(selectedRow, 1);
                     borrowBook(isbn);
@@ -135,6 +141,7 @@ public class UserFrame extends JFrame {
         return panel;
     }
 
+    //借阅功能的实现（一本书一个isbn)
     private void borrowBook(String isbn) {
         try {
             // 检查书籍是否存在且未被借阅
@@ -238,8 +245,8 @@ public class UserFrame extends JFrame {
             while (resultSet.next()) {
                 String name = resultSet.getString("name");
                 String isbn = resultSet.getString("isbn");
-                Timestamp borrowDate = resultSet.getTimestamp("borrow_date");
-                Timestamp returnDate = resultSet.getTimestamp("return_date");
+                Timestamp borrowDate = resultSet.getTimestamp("borrow_date");   //获取时间戳
+                Timestamp returnDate = resultSet.getTimestamp("return_date");   //获取时间戳
 
                 model.addRow(new Object[]{name, isbn, borrowDate, returnDate});
             }
