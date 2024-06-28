@@ -1,3 +1,7 @@
+/*
+    这里是管理员系统的设置
+
+ */
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
@@ -7,7 +11,9 @@ import java.sql.*;
 import org.mindrot.jbcrypt.BCrypt;
 
 public class AdminFrame extends JFrame {
+    //启用jdbc连接数据库
     private Connection connection;
+
 
     public AdminFrame(Connection connection) {
         this.connection = connection;
@@ -20,14 +26,16 @@ public class AdminFrame extends JFrame {
         // 创建选项卡面板，分别用于图书管理和用户管理
         JTabbedPane tabbedPane = new JTabbedPane();
 
-        JPanel bookPanel = createBookPanel();
-        JPanel userPanel = createUserPanel();
+        JPanel bookPanel = createBookPanel();       //书籍选项卡
+        JPanel userPanel = createUserPanel();       //用户选项卡
         JPanel historyPanel = createHistoryPanel(); // 添加借阅历史面板到选项卡
 
+        //添加表头
         tabbedPane.addTab("图书管理", bookPanel);
         tabbedPane.addTab("用户管理", userPanel);
         tabbedPane.addTab("借阅历史", historyPanel); // 将借阅历史面板添加到选项卡
 
+        //添加到中部
         add(tabbedPane, BorderLayout.CENTER);
     }
 
@@ -37,7 +45,7 @@ public class AdminFrame extends JFrame {
         panel.setLayout(new BorderLayout());
 
         // 创建图书信息录入区域
-        JPanel inputPanel = new JPanel(new GridLayout(4, 2, 10, 10));
+        JPanel inputPanel = new JPanel(new GridLayout(4, 2, 10, 10));//卡片式布局
         JLabel nameLabel = new JLabel("书名:");
         JTextField nameField = new JTextField();
         JLabel isbnLabel = new JLabel("ISBN:");
@@ -46,6 +54,7 @@ public class AdminFrame extends JFrame {
         JTextField priceField = new JTextField();
         JButton addButton = new JButton("添加");
 
+        //添加到上层容器之中
         inputPanel.add(nameLabel);
         inputPanel.add(nameField);
         inputPanel.add(isbnLabel);
@@ -55,17 +64,20 @@ public class AdminFrame extends JFrame {
         inputPanel.add(new JLabel());
         inputPanel.add(addButton);
 
+        //上层容器位置
         panel.add(inputPanel, BorderLayout.NORTH);
 
-        // 创建图书信息显示表格
+        // 创建图书信息显示表格  调用DefaultTableModel实现数据模组的展示
         DefaultTableModel model = new DefaultTableModel();
         model.addColumn("书名");
         model.addColumn("ISBN");
         model.addColumn("单价");
 
+        //与之对应配合的JTable显示层组件
         JTable table = new JTable(model);
         JScrollPane scrollPane = new JScrollPane(table);
         panel.add(scrollPane, BorderLayout.CENTER);
+
 
         // 添加图书按钮点击事件
         addButton.addActionListener(new ActionListener() {
@@ -75,6 +87,7 @@ public class AdminFrame extends JFrame {
                 String isbn = isbnField.getText();
                 String priceStr = priceField.getText();
 
+                //加一个错误处理如果填写不完整的书籍信息不会被录入系统中，防止恶意数据
                 if (name.isEmpty() || isbn.isEmpty() || priceStr.isEmpty()) {
                     JOptionPane.showMessageDialog(AdminFrame.this, "请填写完整的图书信息");
                     return;
@@ -84,12 +97,15 @@ public class AdminFrame extends JFrame {
                     double price = Double.parseDouble(priceStr);
 
                     // 插入图书信息到数据库
-                    String insertQuery = "INSERT INTO books (name, isbn, price) VALUES (?, ?, ?)";
-                    PreparedStatement insertStatement = connection.prepareStatement(insertQuery);
+                    String insertQuery = "INSERT INTO books (name, isbn, price) VALUES (?, ?, ?)";      //插入sql键值对
+                    PreparedStatement insertStatement = connection.prepareStatement(insertQuery);       //预编译执行
+                    /*
+                        代替问号执行一下填充
+                     */
                     insertStatement.setString(1, name);
                     insertStatement.setString(2, isbn);
                     insertStatement.setDouble(3, price);
-                    insertStatement.executeUpdate();
+                    insertStatement.executeUpdate();//执行数据库修改操作
 
                     // 更新表格显示
                     model.addRow(new Object[]{name, isbn, price});
@@ -137,7 +153,7 @@ public class AdminFrame extends JFrame {
         JPanel panel = new JPanel();
         panel.setLayout(new BorderLayout());
 
-        // 创建用户信息显示表格
+        // 创建用户信息显示表格（临时表格）
         DefaultTableModel model = new DefaultTableModel();
         model.addColumn("用户名");
         model.addColumn("密码");
@@ -202,9 +218,9 @@ public class AdminFrame extends JFrame {
                         String insertQuery = "INSERT INTO users (username, password, is_admin) VALUES (?, ?, ?)";
                         PreparedStatement insertStatement = connection.prepareStatement(insertQuery);
                         insertStatement.setString(1, newUsername);
-                        insertStatement.setString(2, BCrypt.hashpw("123456", BCrypt.gensalt())); // 默认密码为123456，实际应用中可修改
+                        insertStatement.setString(2, BCrypt.hashpw("123456", BCrypt.gensalt())); // 默认密码为123456
                         insertStatement.setBoolean(3, false); // 默认为普通用户
-                        insertStatement.executeUpdate();
+                        insertStatement.executeUpdate();//更新sql数据库
 
                         JOptionPane.showMessageDialog(AdminFrame.this, "用户添加成功");
                         insertStatement.close();
@@ -221,6 +237,8 @@ public class AdminFrame extends JFrame {
             @Override
             public void actionPerformed(ActionEvent e) {
                 int selectedRow = table.getSelectedRow();
+
+                //保证行索引不是空行
                 if (selectedRow != -1) {
                     String username = (String) model.getValueAt(selectedRow, 0);
                     boolean isAdmin = JOptionPane.showConfirmDialog(AdminFrame.this,
@@ -321,6 +339,7 @@ public class AdminFrame extends JFrame {
         model.setRowCount(0); // 清空表格
 
         try {
+            //注意join不能用union以及u.username实现对于不同表中同名的列的查询 u = user b = books bb = borrow_books
             String query = "SELECT u.username, b.name AS book_name, b.isbn, bb.borrow_date, bb.return_date FROM borrowed_books bb " +
                     "JOIN users u ON bb.username = u.username " +
                     "JOIN books b ON bb.book_id = b.id";
@@ -356,3 +375,7 @@ public class AdminFrame extends JFrame {
         });
     }
 }
+
+/*
+    注意添加新的用户的默认密码为123456
+ */
