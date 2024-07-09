@@ -238,30 +238,37 @@ public class AdminFrame extends JFrame {
             public void actionPerformed(ActionEvent e) {
                 int selectedRow = table.getSelectedRow();
 
-                //保证行索引不是空行
                 if (selectedRow != -1) {
                     String username = (String) model.getValueAt(selectedRow, 0);
-                    boolean isAdmin = JOptionPane.showConfirmDialog(AdminFrame.this,
-                            "是否将用户 " + username + " 设置为管理员？", "确认", JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION;
 
-                    try {
-                        String updateQuery = "UPDATE users SET is_admin=? WHERE username=?";
-                        PreparedStatement updateStatement = connection.prepareStatement(updateQuery);
-                        updateStatement.setBoolean(1, isAdmin);
-                        updateStatement.setString(2, username);
-                        updateStatement.executeUpdate();
+                    // 显示确认对话框，获取用户的确认结果
+                    int confirmResult = JOptionPane.showConfirmDialog(AdminFrame.this,
+                            "是否将用户 " + username + " 设置为管理员？", "确认", JOptionPane.YES_NO_OPTION);
 
-                        JOptionPane.showMessageDialog(AdminFrame.this, "用户信息更新成功");
-                        updateStatement.close();
-                    } catch (SQLException ex) {
-                        ex.printStackTrace();
-                        JOptionPane.showMessageDialog(AdminFrame.this, "用户信息更新失败：" + ex.getMessage());
+                    if (confirmResult == JOptionPane.YES_OPTION) {
+                        try {
+                            String updateQuery = "UPDATE users SET is_admin=? WHERE username=?";
+                            PreparedStatement updateStatement = connection.prepareStatement(updateQuery);
+                            updateStatement.setBoolean(1, true); // 设置为管理员
+                            updateStatement.setString(2, username);
+                            updateStatement.executeUpdate();
+
+                            JOptionPane.showMessageDialog(AdminFrame.this, "用户信息更新成功");
+                            updateStatement.close();
+
+                            // 刷新表格显示
+                            model.setValueAt("是", selectedRow, 2); // 更新表格中的管理员信息显示
+                        } catch (SQLException ex) {
+                            ex.printStackTrace();
+                            JOptionPane.showMessageDialog(AdminFrame.this, "用户信息更新失败：" + ex.getMessage());
+                        }
                     }
                 } else {
                     JOptionPane.showMessageDialog(AdminFrame.this, "请选择要更新的用户");
                 }
             }
         });
+
 
         // 删除用户按钮点击事件（示例）
         deleteButton.addActionListener(new ActionListener() {
@@ -364,16 +371,7 @@ public class AdminFrame extends JFrame {
         }
     }
 
-    public static void main(String[] args) {
-        // 示例主方法，用于测试 AdminFrame 类
-        Connection connection = null; // 请根据实际情况初始化数据库连接
-        SwingUtilities.invokeLater(new Runnable() {
-            public void run() {
-                AdminFrame adminFrame = new AdminFrame(connection);
-                adminFrame.setVisible(true);
-            }
-        });
-    }
+
 }
 
 /*
